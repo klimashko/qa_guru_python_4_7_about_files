@@ -12,6 +12,7 @@ def test_zip_csv(clean_resources):
     with open('addresses_1.csv') as file:
         rows = [row for row in csv.reader(file)]
         first_row = rows[0]
+        num_rows = len(rows)
 
 
     with ZipFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "addresses_1_csv.zip"), "w") as my_zip:
@@ -20,9 +21,11 @@ def test_zip_csv(clean_resources):
         with myzip.open('addresses_1.csv', 'r') as csv_file:
             rows_from_zip = [row for row in csv.reader(codecs.iterdecode(csv_file, 'utf-8'))]
             first_row_from_zip = rows_from_zip[0]
+            num_rows_from_zip = len(rows_from_zip)
 
 
     assert first_row_from_zip == first_row, 'First row not matched'
+    assert num_rows_from_zip == num_rows, 'Rows numbers in csv files not matched'
 
 
 
