@@ -6,30 +6,47 @@ import csv
 from zipfile import ZipFile
 import io
 import PyPDF2
-
-
-
-def test_zip_csv():
-    with open('addresses_1.csv') as file:
-        # second_row_csv_file = csv.reader(file)[1]
-        # print(second_row_csv_file)
-
-    with ZipFile(os.path.join(os.path.dirname(__file__), "resources", "addresses_1_csv.zip"), "w") as my_zip:
-        my_zip.write('addresses_1.csv')
-    with ZipFile('resources/addresses_1_csv.zip') as myzip:
-        with myzip.open('addresses_1.csv', 'r') as csv_file:
-            print(csv.reader(csv_file)[0])
+import codecs
+from openpyxl import load_workbook
 
 
 
 
-# def test_zip_xlsx():
-#     with ZipFile(os.path.join(os.path.dirname(__file__), "resources", "sample2_xlsx.zip"), "w") as my_zip:
-#          my_zip.write("sample2.xlsx")
-#     with ZipFile("resources/sample2_xlsx.zip") as myzip:
-#         read_xlsx = myzip.read("sample2.xlsx")
-#         print(type(read_xlsx))
+# def test_zip_csv():
+#     with open('addresses_1.csv') as file:
+#         rows = [row for row in csv.reader(file)]
+#         first_row_in_csv_file = rows[0]
 #
+#
+#     with ZipFile(os.path.join(os.path.dirname(__file__), "resources", "addresses_1_csv.zip"), "w") as my_zip:
+#         my_zip.write('addresses_1.csv')
+#     with ZipFile('resources/addresses_1_csv.zip') as myzip:
+#         with myzip.open('addresses_1.csv', 'r') as csv_file:
+#             rows_from_zip = [row for row in csv.reader(codecs.iterdecode(csv_file, 'utf-8'))]
+#             first_row_in_csv_file_from_zip = rows_from_zip[0]
+#
+#     assert first_row_in_csv_file_from_zip == first_row_in_csv_file, 'First row not matched'
+
+
+
+
+def test_zip_xlsx():
+    with open('sample2.xlsx') as file:
+        cell = load_workbook('sample2.xlsx').active.cell(row=1, column=2).value
+        print(cell)
+
+
+    with ZipFile(os.path.join(os.path.dirname(__file__), "resources", "sample2_xlsx.zip"), "w") as new_zip:
+         new_zip.write("sample2.xlsx")
+    with ZipFile("resources/sample2_xlsx.zip") as myzip:
+        with myzip.open('sample2.xlsx', 'r') as xlsx_file:
+            cell_xlsx_file_from_zip = load_workbook(xlsx_file).active.cell(row=1, column=2).value
+            print(cell_xlsx_file_from_zip)
+
+
+    assert cell == cell_xlsx_file_from_zip
+
+
 # def test_zip_pdf():
 #     num_pages_pdf_file = len(PdfReader('example3.pdf').pages)
 #     text_1page_pdf_file = PdfReader('example3.pdf').pages[0].extract_text()
