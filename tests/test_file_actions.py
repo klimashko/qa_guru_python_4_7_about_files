@@ -33,7 +33,11 @@ def test_zip_csv(clean_resources):
 def test_zip_xlsx(clean_resources):
     with open('sample2.xlsx') as file:
         cell = load_workbook('sample2.xlsx').active.cell(row=1, column=2).value
-        print(cell)
+        worksheet = load_workbook('sample2.xlsx').active
+        num_rows = 0
+        for row in worksheet.iter_rows():
+            if any(cell.value for cell in row):
+                num_rows += 1
 
 
     with ZipFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources", "sample2_xlsx.zip"), "w") as new_zip:
@@ -41,9 +45,14 @@ def test_zip_xlsx(clean_resources):
     with ZipFile("resources/sample2_xlsx.zip") as myzip:
         with myzip.open('sample2.xlsx', 'r') as xlsx_file:
             cell_from_zip = load_workbook(xlsx_file).active.cell(row=1, column=2).value
-
+            worksheet = load_workbook(xlsx_file).active
+            num_rows_from_zip = 0
+            for row in worksheet.iter_rows():
+                if any(cell.value for cell in row):
+                    num_rows_from_zip += 1
 
     assert cell == cell_from_zip, 'Cell content not matched'
+    assert num_rows == num_rows_from_zip, 'Row numbers not matched'
 
 
 
